@@ -1,4 +1,4 @@
-// SISTEMA DE CADASTRO DE ALUNOS 
+// CADASTRO DE ALUNOS 
 // DEFININDO BIBLIOTECAS 
 #include <iostream>
 #include <string>
@@ -10,16 +10,76 @@ struct Alunos {
     float nota;
 };
 
-int main() {
-    // DEFININDO VARIÁVEIS
-    Alunos vetor[100];
-    int opcao;
-    std::string nome_busca;
-    char continuar;
-    int contador = 0; // contador para rastrear alunos cadastrados
+// FUNÇÃO PARA CADASTRAR UM ALUNO
+void cadastrarAluno(struct Alunos vetor[], int &contador) { 
+    // & - pq precisamos atualizar contador cada vez que um aluno novo é passado, nas outras funções não precisa porque ela apenas lê o valor de contador
+    
+    // PEDINDO INFORMAÇÕES
+    if (contador < 100) {
+        std::cout << "Digite o nome do aluno: ";
+        std::cin >> vetor[contador].nome; // devo usar contador e nao i para garantir que cada novo aluno seja armazenado na próxima posição dispinivel do vetor
 
-    // MENU DE OPÇÕES
-    while (true) {
+        std::cout << "Digite a matricula do aluno: "; 
+        std::cin >> vetor[contador].matricula;
+
+        std::cout << "Digite a nota do aluno: ";
+        std::cin >> vetor[contador].nota;
+
+        std::cout << "Aluno cadastrado com sucesso!" << std::endl;
+        
+        contador++;
+    } 
+    else {
+        std::cout << "Limite de alunos atingido!" << std::endl;
+    }
+}
+
+// FUNÇÃO PARA MOSTRAR TODOS OS ALUNOS CADASTRADOR 
+void mostrarAlunos(struct Alunos vetor[], int contador) {
+    // DEFININDO CONDIÇÕES
+    std::cout << "Alunos cadastrados:\n";
+    for (int i = 0; i < contador; i++) {
+        std::cout << "Nome: " << vetor[i].nome 
+                  << ", Matricula: " << vetor[i].matricula 
+                  << ", Nota: " << vetor[i].nota << std::endl; 
+    }
+}
+
+// FUNÇÃO PARA BUSCAR POR UM ALUNO
+void buscarAluno(struct Alunos vetor[], int contador) {
+    // DEFININDO VARIÁVEIS
+    std::string nome_busca;
+
+    // PEDINDO INFORMAÇÕES
+    std::cout << "Digite o nome do aluno que deseja buscar: ";
+    std::cin >> nome_busca;
+
+    // DEFININDO CONDIÇÕES
+    bool encontrado = false; // indica que até agora não encontrou aluno
+    for (int i = 0; i < contador; i++) {
+        if (nome_busca == vetor[i].nome) {
+            std::cout << "Aluno encontrado: " 
+                      << "Nome: " << vetor[i].nome 
+                      << ", Matricula: " << vetor[i].matricula 
+                      << ", Nota: " << vetor[i].nota << std::endl; 
+            encontrado = true; // indica que encontrou o aluno
+            break; 
+        }
+    }
+
+    if (!encontrado) { // se após o loop continuar falso, significa que não encontrou nenhum aluno
+        std::cout << "Aluno nao encontrado!" << std::endl; 
+    }
+}
+
+int main() {
+    // DEFININDO VARIÁVEIS 
+    Alunos vetor[100];
+    int contador = 0; // contador para rastrear alunos cadastrados
+    int opcao;
+
+    do {
+        // DEFININDO MENU
         std::cout << "\nMenu de Opcoes\n";
         std::cout << "1. Cadastrar um novo aluno\n";
         std::cout << "2. Mostrar todos os alunos cadastrados\n";
@@ -28,61 +88,18 @@ int main() {
         std::cout << "Escolha uma opcao: ";
         std::cin >> opcao;
 
-        // DEFININDO CONDIÇÕES 
+        // DEFININDO CONDIÇÕES
         switch (opcao) {
             case 1:
-                if (contador < 100) {
-                    std::cout << "Digite o nome do aluno: ";
-                    std::cin >> vetor[contador].nome; // indica a posicao em que o aluno será colocado, por isso "contador"
-
-                    std::cout << "Digite a matricula do aluno: "; 
-                    std::cin >> vetor[contador].matricula; 
-
-                    std::cout << "Digite a nota do aluno: ";
-                    std::cin >> vetor[contador].nota; 
-
-                    std::cout << "Aluno cadastrado com sucesso!" << std::endl;
-                    contador++;
-
-                    std::cout << "Deseja continuar cadastrando outro aluno? (s/n): ";
-                    std::cin >> continuar; 
-
-                    if (continuar != 's' && continuar != 'S') {
-                        opcao = 4; // mudar para a opção 4
-                    }
-                } else {
-                    std::cout << "Limite de alunos atingido!" << std::endl;
-                }
-                break; 
+                cadastrarAluno(vetor, contador);
+                break;
 
             case 2:
-                std::cout << "Alunos cadastrados:\n";
-                for (int i = 0; i < contador; i++) {
-                    std::cout << "Nome: " << vetor[i].nome // percorrendo todas as posições do vetor, por isso "i"
-                              << ", Matricula: " << vetor[i].matricula 
-                              << ", Nota: " << vetor[i].nota << std::endl; 
-                }
-                break; 
+                mostrarAlunos(vetor, contador);
+                break;
 
             case 3: 
-                std::cout << "Digite o nome do aluno que deseja buscar: ";
-                std::cin >> nome_busca;
-
-                int encontrado = 0; // indica que até agr não encontrou aluno
-                for (int i = 0; i < contador; i++) {
-                    if (nome_busca == vetor[i].nome) {
-                        std::cout << "Aluno encontrado: " 
-                                  << "Nome: " << vetor[i].nome 
-                                  << ", Matricula: " << vetor[i].matricula 
-                                  << ", Nota: " << vetor[i].nota << std::endl; 
-                        encontrado = 1; // indica que encontrou o aluno
-                        break; 
-                    }
-                }
-
-                if (encontrado == 0) { // se após o loop continuar 0, significa que não encontrou nenhum aluno
-                    std::cout << "Aluno nao encontrado!" << std::endl; 
-                }
+                buscarAluno(vetor, contador);
                 break; 
 
             case 4: 
@@ -92,7 +109,7 @@ int main() {
             default: 
                 std::cout << "Opcao invalida! Tente novamente!" << std::endl;
         }
-    }
+    } while (opcao != 4);
     
     return 0;
 }
